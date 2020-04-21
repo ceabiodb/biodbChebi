@@ -1,0 +1,27 @@
+Package: biodbChebi
+Title: biodbChebi, a library for connecting to the ChEBI Database
+Version: 0.99.0
+Authors@R: c(person("Pierrick", "Roger", email = "pierrick.roger@cea.fr", role = c("aut", "cre")))
+Description: The biodbChebi library provides access to the ChEBI Database, using biodb package framework.
+biocViews: Software, Infrastructure, DataImport
+Depends:
+    R (>= 3.6)
+License: AGPL-3
+Encoding: UTF-8
+LazyData: true
+VignetteBuilder: knitr
+Suggests:
+	BiocStyle,
+	roxygen2,
+	devtools,
+	testthat (>= 2.0.0),
+	knitr,
+	rmarkdown
+Imports:
+	methods,
+	biodb (>= 0.99.0)
+RoxygenNote: 7.1.0
+Collate:
+    'ChebiConn.R'
+    'ChebiEntry.R'
+    'package.R'

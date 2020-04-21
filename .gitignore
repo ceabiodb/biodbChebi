@@ -1,0 +1,7 @@
+doc
+Meta
+biodbChebi.Rcheck
+biodbChebi_*.tar.gz
+cache
+man
+tests/testthat/output

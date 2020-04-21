@@ -1,18 +1,7 @@
-# vi: fdm=marker ts=4 et cc=80 tw=80
-
-# ChebiConn {{{1
-################################################################################
-
-# Declaration {{{2
-################################################################################
-
 #' ChEBI connector class.
 #'
 #' This is the connector class for connecting to the ChEBI database through its
 #' web services.
-#'
-#' @seealso Super classes \code{\link{BiodbRemotedbConn}} and
-#' \code{\link{BiodbCompounddbConn}}.
 #'
 #' @examples
 #' # Create an instance with default settings:
@@ -30,8 +19,7 @@
 #' # Terminate instance.
 #' mybiodb$terminate()
 #'
-#' @include BiodbCompounddbConn.R
-#' @include BiodbRemotedbConn.R
+#' @import methods
 #' @export ChebiConn
 #' @exportClass ChebiConn
 ChebiConn <- methods::setRefClass("ChebiConn",
@@ -41,13 +29,7 @@ ChebiConn <- methods::setRefClass("ChebiConn",
         ws.values='list' # Stores WSDL values
     ),
 
-# Public methods {{{2
-################################################################################
-
 methods=list(
-
-# Initialize {{{3
-################################################################################
 
 initialize=function(...) {
 
@@ -55,9 +37,6 @@ initialize=function(...) {
 
     .self$initFields(wsdl=NULL, ws.values=list())
 },
-
-# Get entry page url {{{3
-################################################################################
 
 getEntryPageUrl=function(id) {
     # Overrides super class' method
@@ -70,9 +49,6 @@ getEntryPageUrl=function(id) {
     
     return(urls)
 },
-
-# Get entry image url {{{3
-################################################################################
 
 getEntryImageUrl=function(id) {
     # Overrides super class' method
@@ -89,9 +65,6 @@ getEntryImageUrl=function(id) {
     return(urls)
 },
 
-
-# Web service WSDL {{{3
-################################################################################
 
 wsWsdl=function(retfmt=c('plain', 'parsed', 'request')) {
     ":\n\nRetrieves the complete WSDL from the web server.
@@ -120,9 +93,6 @@ wsWsdl=function(retfmt=c('plain', 'parsed', 'request')) {
 
     return(results)
 },
-
-# Web service getLiteEntity {{{3
-################################################################################
 
 wsGetLiteEntity=function(search=NULL, search.category='ALL', max.results=10,
                          stars='ALL',
@@ -189,9 +159,6 @@ wsGetLiteEntity=function(search=NULL, search.category='ALL', max.results=10,
     return(results)
 },
 
-# Convert IDs to ChEBI IDs {{{3
-################################################################################
-
 convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
     ":\n\nConverts a list of IDs (InChI, InChI Keys, CAS, ...) into a list of
     ChEBI IDs. Several ChEBI IDs may be returned for a single ID.
@@ -234,9 +201,6 @@ convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
     return(chebi)
 },
 
-# Convert InChI to ChEBI ID {{{3
-################################################################################
-
 convInchiToChebi=function(inchi, simplify=TRUE) {
     ":\n\nConverts a list of InChI or InChI KEYs into a list of ChEBI IDs.
     Several ChEBI IDs may be returned for a single InChI or InChI KEY.
@@ -250,9 +214,6 @@ convInchiToChebi=function(inchi, simplify=TRUE) {
                                    simplify=simplify))
 },
 
-# Convert CAS ID to ChEBI ID {{{3
-################################################################################
-
 convCasToChebi=function(cas, simplify=TRUE) {
     ":\n\nConverts a list of CAS IDs into a list of ChEBI IDs.
     Several ChEBI IDs may be returned for a single InChI or InChI KEY.
@@ -265,9 +226,6 @@ convCasToChebi=function(cas, simplify=TRUE) {
     return(.self$convIdsToChebiIds(cas, search.category='REGISTRY NUMBERS',
                                    simplify=simplify))
 },
-
-# Search compound {{{3
-################################################################################
 
 searchCompound=function(name=NULL, mass=NULL, mass.field=NULL, mass.tol=0.01,
                         mass.tol.unit='plain', max.results=NA_integer_) {
@@ -360,9 +318,6 @@ searchCompound=function(name=NULL, mass=NULL, mass.field=NULL, mass.tol=0.01,
     return(ids)
 },
 
-# Get WSDL {{{3
-################################################################################
-
 getWsdl=function() {
     ":\n\nGets the WSDL as an XML object.
     \nReturned value: The ChEBI WSDL as an XML object.
@@ -373,9 +328,6 @@ getWsdl=function() {
     
     return(.self$wsdl)
 },
-
-# Get WSDL enumeration {{{3
-################################################################################
 
 getWsdlEnumeration=function(name) {
     ":\n\nExtracts a list of values from an enumeration in the WSDL.
@@ -397,9 +349,6 @@ getWsdlEnumeration=function(name) {
     return(.self$ws.values[[name]])
 },
 
-# Get stars categories {{{3
-################################################################################
-
 getStarsCategories=function() {
     ":\n\nGets the list of allowed stars categories for the getLiteEntity web
     service.
@@ -410,9 +359,6 @@ getStarsCategories=function() {
     return(.self$getWsdlEnumeration('StarsCategory'))
 },
 
-# Get search categories {{{3
-################################################################################
-
 getSearchCategories=function() {
     ":\n\nGets the list of allowed search categories for the getLiteEntity web
     service.
@@ -422,12 +368,6 @@ getSearchCategories=function() {
 
     return(.self$getWsdlEnumeration('SearchCategory'))
 },
-
-# Private methods {{{2
-################################################################################
-
-# Get entry content request {{{3
-################################################################################
 
 .doGetEntryContentRequest=function(id, concatenate=TRUE) {
 
@@ -441,16 +381,10 @@ getSearchCategories=function() {
     return(urls)
 },
 
-# Get entry ids {{{3
-################################################################################
-
 .doGetEntryIds=function(max.results=NA_integer_) {
     return(.self$wsGetLiteEntity(search='1*', search.category='CHEBI ID',
                                  max.results=max.results, retfmt='ids'))
 },
-
-# Filtering IDs on mass range {{{3
-################################################################################
 
 .filterIdsOnMassRange=function(ids, mass.min, mass.max, mass.field, limit) {
 
@@ -468,7 +402,7 @@ getSearchCategories=function() {
 
         # Get entry
         e <- .self$getEntry(id, drop=TRUE)
-        
+
         # Test mass
         if ( ! is.null(e)) {
             m <- e$getFieldValue(mass.field)

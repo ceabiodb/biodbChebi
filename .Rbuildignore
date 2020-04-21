@@ -1,0 +1,9 @@
+^doc$
+^Makefile$
+^LICENSE$
+^cache$
+^tests/testthat/output$
+^\.travis\.yml$
+^biodbChebi\.Rcheck$
+^biodbChebi_.*\.tar\.gz$
+^Meta$

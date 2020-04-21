@@ -1,17 +1,7 @@
-# vi: fdm=marker ts=4 et cc=80 tw=80
-
-# ChebiEntry {{{1
-################################################################################
-
-# Declaration {{{2
-################################################################################
-
 #' ChEBI entry class.
 #'
 #' This is the entry class for ChEBI database.
 #'
-#' @seealso Super class \code{\link{BiodbXmlEntry}}.
-#' 
 #' @examples
 #' # Create an instance with default settings:
 #' mybiodb <- biodb::Biodb()
@@ -25,7 +15,6 @@
 #' # Terminate instance.
 #' mybiodb$terminate()
 #'
-#' @include BiodbXmlEntry.R
 #' @export ChebiEntry
 #' @exportClass ChebiEntry
 ChebiEntry <- methods::setRefClass("ChebiEntry",

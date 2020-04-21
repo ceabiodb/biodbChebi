@@ -1,8 +1,8 @@
 ---
-title: "*biodb*: Using ChEBI connector"
+title: "*biodbChebi*: Using ChEBI connector"
 author: "Pierrick Roger"
 date: "`r doc_date()`"
-package: "`r pkg_ver('biodb')`"
+package: "`r pkg_ver('biodbChebi')`"
 abstract: |
   How to use the ChEBI connector and its methods.
 vignette: |

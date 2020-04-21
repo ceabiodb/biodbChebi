@@ -1,8 +1,3 @@
-# vi: fdm=marker ts=4 et cc=80 tw=80
-
-# Test ChEBI encoding issue in XML {{{1
-################################################################
-
 test.chebi.encoding.issue.in.xml <- function(conn) {
 
 	entry.ids <- conn$wsGetLiteEntity(search = "2571",
@@ -17,9 +12,6 @@ test.chebi.encoding.issue.in.xml <- function(conn) {
 	entry <- conn$getEntry('2571')
 }
 
-# Test ChEBI wsGetLiteEntity() {{{1
-################################################################
-
 test.chebi.wsGetLiteEntity <- function(conn) {
 
 	# Get Id
@@ -31,20 +23,17 @@ test.chebi.wsGetLiteEntity <- function(conn) {
 	testthat::expect_identical(entry.ids, id)
 }
 
-# Test ChEBI convCasToChebi() {{{1
-################################################################
-
 test_chebi_convCasToChebi <- function(conn) {
-    
+
     # Values
     cas2chebi1 <- c('51-41-2'='18357', '87605-72-9'='10000')
     cas2chebi2 <- c(as.list(cas2chebi1), list('14215-68-0'=c('40356', '28037')))
-    
+
     # Get ChEBI IDs
     ids <- conn$convCasToChebi(names(cas2chebi1))
     testthat::expect_is(ids, 'character')
     testthat::expect_identical(ids, unname(cas2chebi1))
-    
+
     # Chech NA
     ids <- conn$convCasToChebi(NA_character_)
     testthat::expect_is(ids, 'character')
@@ -58,9 +47,6 @@ test_chebi_convCasToChebi <- function(conn) {
     testthat::expect_identical(ids, unname(cas2chebi2))
 }
 
-# Test ChEBI convInchiToChebi() {{{1
-################################################################
-
 test_chebi_convInchiToChebi <- function(conn) {
 
     # Build InChIs
@@ -71,11 +57,15 @@ test_chebi_convInchiToChebi <- function(conn) {
     testthat::expect_equal(conn$convInchiToChebi(inchikey), '10341')
 }
 
-# Main {{{1
-################################################################################
+# Main
+################################################################
 
 # Instantiate Biodb
 biodb <- biodb::createBiodbTestInstance(log='chebi_test.log')
+
+# Load package definitions
+file <- system.file("definitions.yml", package='biodbChebi')
+biodb$loadDefinitions(file)
 
 # Set context
 biodb::setTestContext(biodb, "Test ChEBI connector.")
