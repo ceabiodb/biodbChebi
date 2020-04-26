@@ -1,0 +1,23 @@
+language: r
+cache: packages
+r: release
+
+env:
+    - BIODB_USERAGENT="biodbChebi.test ; pierrick.roger@cea.fr"
+
+notifications:
+    email:
+        recipients:
+            - pierrick.roger@cea.fr
+
+before_install:
+    - R -e 'install.packages("BiocManager");BiocManager::install("BiocCheck")'
+    - R -e 'install.packages("devtools", dependencies=TRUE)'
+# TODO switch to master branch when ready.
+    - R -e 'devtools::install_github("pkrog/biodb", ref="dev_0.99", dependencies=TRUE, build_vignettes=FALSE)'
+
+script:
+    - make test
+    - make build
+    - make full.check || (cat /home/travis/build/pkrog/biodbChebi/biodbChebi.Rcheck/tests/testthat.Rout.fail && false)
+    - make bioc.check
