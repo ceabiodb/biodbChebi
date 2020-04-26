@@ -5,6 +5,7 @@
 	"formula": "C27H44O7",
 	"mass": 480.635,
 	"monoisotopic.mass": 480.3087,
+	"molecular.mass": 480.635,
 	"charge": 0,
 	"n.stars": 2,
 	"kegg.compound.id": "C08811",
