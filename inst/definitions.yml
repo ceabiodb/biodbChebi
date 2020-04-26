@@ -51,3 +51,15 @@ fields:
   n_stars:
     description: The ChEBI stars indicator.
     class: integer
+
+  molecular.mass:
+    computable.from:
+      - database: chebi
+
+  inchi:
+    computable.from:
+      - database: chebi
+
+  inchikey:
+    computable.from:
+      - database: chebi
