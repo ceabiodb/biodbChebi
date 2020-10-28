@@ -94,8 +94,8 @@ wsWsdl=function(retfmt=c('plain', 'parsed', 'request')) {
     return(results)
 },
 
-wsGetLiteEntity=function(search=NULL, search.category='ALL', max.results=10,
-                         stars='ALL',
+wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
+                         max.results=10,
                          retfmt=c('plain', 'parsed', 'request', 'ids')) {
     ":\n\nCalls getLiteEntity web service and returns the XML result.
     Be careful when searching by mass
