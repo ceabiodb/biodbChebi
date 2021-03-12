@@ -5,7 +5,7 @@ Authors@R: c(person("Pierrick", "Roger", email = "pierrick.roger@cea.fr", role =
 Description: The biodbChebi library provides access to the ChEBI Database, using biodb package framework.
 biocViews: Software, Infrastructure, DataImport
 Depends:
-    R (>= 3.6)
+    R (>= 4.0)
 License: AGPL-3
 Encoding: UTF-8
 LazyData: true
@@ -20,7 +20,7 @@ Suggests:
 Imports:
 	methods,
 	biodb (>= 0.99.0)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate:
     'ChebiConn.R'
     'ChebiEntry.R'
