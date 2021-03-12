@@ -1,6 +1,7 @@
 # biodbChebi
 
 [![Build Status](https://travis-ci.org/pkrog/biodbChebi.svg?branch=master)](https://travis-ci.org/pkrog/biodbChebi)
+[![Codecov test coverage](https://codecov.io/gh/pkrog/biodbChebi/branch/master/graph/badge.svg)](https://codecov.io/gh/pkrog/biodbChebi?branch=master)
 
 An R package for accessing [Chebi](https://www.ebi.ac.uk/chebi/) online database, based on R package/framework [biodb](https://github.com/pkrog/biodb/).
 
