@@ -1,0 +1,18 @@
+pkgName: biodbChebi
+email: pierrick.roger@cea.fr
+dbName: chebi
+dbTitle: ChEBI database
+pkgLicense: AGPL-3
+firstname: Pierrick
+lastname: Roger
+newPkg: yes
+connType: compound
+entryType: xml
+editable: no
+writable: no
+remote: yes
+downloadable: no
+makefile: yes
+rcpp: no
+vignetteName: intro
+githubRepos: pkrog/biodbChebi
