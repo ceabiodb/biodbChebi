@@ -1,12 +1,10 @@
 ---
-title: "*biodbChebi*: Using ChEBI connector"
-author: "Pierrick Roger"
-date: "`r doc_date()`"
-package: "`r pkg_ver('biodbChebi')`"
-abstract: |
-  How to use the ChEBI connector and its methods.
+title: "An introduction to biodbChebi"
+author: "Firstname of author Lastname of author"
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('biodbChebi')`"
 vignette: |
-  %\VignetteIndexEntry{Using ChEBI connector}
+  %\VignetteIndexEntry{Introduction to the biodbChebi package.}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 output:
@@ -18,16 +16,31 @@ output:
   BiocStyle::pdf_document: default
 ---
 
-# Introduction
+# Purpose
 
-Through the example of the ChEBI database, we are going to see how to access a database to access its entries.
+biodbChebi is a *biodb* extension package that implements a connector to
+Foo database.
 
-First we instantiate the package:
-```{r}
-mybiodb <- biodb::Biodb$new()
+# Initialization
+
+The first step in using *biodbChebi*, is to create an instance of the biodb
+class `Biodb` from the main *biodb* package. This is done by calling the
+constructor of the class:
+```{r, results='hide'}
+mybiodb <- biodb::Biodb()
 ```
+During this step the configuration is set up, the cache system is initialized
+and extension packages are loaded.
 
-Then we create a connector to ChEBI:
+We will see at the end of this vignette that the *biodb* instance needs to be
+terminated with a call to the `terminate()` method.
+
+# Creating a connector to Foo database
+
+In *biodb* the connection to a database is handled by a connector instance that
+you can get from the factory.
+biodbChebi implements a connector to a local database, thus when creating an
+instance you must provide a URL that points to your database:
 ```{r}
 chebi <- mybiodb$getFactory()$createConn('chebi')
 ```

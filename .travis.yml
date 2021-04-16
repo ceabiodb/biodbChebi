@@ -1,3 +1,5 @@
+# Travis-CI configuration file for biodb extensions packages, version 1.0.0
+
 language: r
 cache: packages
 r: release
@@ -13,14 +15,12 @@ notifications:
 branches:
   only:
     - master
-
+    
 before_install:
     - R -e 'install.packages("BiocManager");BiocManager::install("BiocCheck")'
-    - R -e 'install.packages("devtools", dependencies=TRUE)'
-    - R -e 'devtools::install_github("pkrog/biodb", ref="master", dependencies=TRUE, build_vignettes=FALSE)'
 
 script:
     - make check
 
-after_success:
-    - Rscript -e 'covr::codecov()'
+#after_success:
+#    - Rscript -e 'covr::codecov()'

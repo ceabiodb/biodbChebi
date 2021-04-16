@@ -111,20 +111,21 @@ wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
     \nmax.results: The maximum of results to return.
     \nstars: How many starts the returned entities should have. Call
     `getStarsCategories() to get a full list of starts categories.`
-    \nretfmt: The return format to use. 'plain' will return the results as given by the server, in a string. 'parsed' will return an XML object. 'request' will return a BiodbRequest object representing the request as would have been sent. 'ids' will return a list of matched entity IDs.
+    \nretfmt: The return format to use. 'plain' will return the results as
+    given by the server, in a string. 'parsed' will return an XML object.
+    'request' will return a BiodbRequest object representing the request as
+    would have been sent. 'ids' will return a list of matched entity IDs.
     \nReturned value: Depending on `retfmt` value.
     "
 
     retfmt <- match.arg(retfmt)
 
     # Check parameters
-    .self$.assertNotNull(search)
-    .self$.assertNotNa(search)
-    .self$.assertIn(search.category, .self$getSearchCategories())
-    if (is.na(max.results))
-        max.results <- 0
-    .self$.assertPositive(max.results)
-    .self$.assertIn(stars, .self$getStarsCategories())
+    chk::chk_string(search)
+    chk::chk_in(search.category, .self$getSearchCategories())
+    chk::chk_number(max.results)
+    chk::chk_gte(max.results, 0)
+    chk::chk_in(stars, .self$getStarsCategories())
 
     # Build request
     params <- c(search=search,
@@ -227,92 +228,87 @@ convCasToChebi=function(cas, simplify=TRUE) {
                                    simplify=simplify))
 },
 
-searchCompound=function(name=NULL, mass=NULL, mass.field=NULL, mass.tol=0.01,
-                        mass.tol.unit='plain', max.results=NA_integer_) {
-    # Overrides super class' method.
+.searchByMass=function(mass.field, mass.min, mass.max, max.results=0) {
 
-    .self$.checkMassField(mass=mass, mass.field=mass.field)
+    ids <- character()
+
+    # Set search category
+    if (mass.field == 'monoisotopic.mass')
+        search.category <- 'MONOISOTOPIC MASS'
+    else if (mass.field == 'molecular.mass')
+        search.category <- 'MASS'
+    else
+        .self$error('Unknown mass field "', mass.field, '".')
+                           
+    # Search for all masses in the range
+    n <- floor(log10(mass.max - mass.min))
+    if (n >= 0)
+        n <- -1
+    firstMass <- floor(mass.min * 10^-n) * 10^n
+    lastMass <- ceiling(mass.max * 10^-n) * 10^n
+    for (m in seq(firstMass, lastMass, 10^n)) {
+
+        # Get entries matching integer mass
+        x <- .self$wsGetLiteEntity(search=paste0(m, '*'),
+                                   search.category=search.category,
+                                   max.results=0, retfmt='ids')
+        
+        # Remove IDs that we already have
+        x <- x[ ! x %in% ids]
+        
+        # Filter on mass range
+        x <- .self$.filterIdsOnMassRange(x, mass.min, mass.max,
+                                         mass.field,
+                                         max.results - length(ids))
+        
+        # Add IDs
+        ids <- c(ids, x)
+        
+        if ( ! is.na(max.results) && max.results > 0 && length(ids)
+            >= max.results)
+            break
+    }
+
+    # Remove duplicates
+    ids <- ids[ ! duplicated(ids)]
+    
+    return(ids)
+},
+
+.doSearchForEntries=function(fields=NULL, max.results=0) {
 
     ids <- NULL
 
-    # Search by name
-    if ( ! is.null(name))
-        ids <- .self$wsGetLiteEntity(search=name, search.category="ALL NAMES",
-                                     max.results=0, retfmt='ids')
+    if ( ! is.null(fields)) {
 
-    # Search by mass
-    if ( ! is.null(mass) && ! is.null(mass.field)) {
-
-        mass.field <- .self$getBiodb()$getEntryFields()$getRealName(mass.field)
-
-        if ( ! mass.field %in% c('monoisotopic.mass' ,'molecular.mass'))
-            .self$caution('Mass field "', mass.field, '" is not handled.')
-
-        else {
-
-            # Compute mass range
-            if (mass.tol.unit == 'ppm') {
-                mass.min <- mass * (1 - mass.tol * 1e-6)
-                mass.max <- mass * (1 + mass.tol * 1e-6)
-            } else {
-                mass.min <- mass - mass.tol
-                mass.max <- mass + mass.tol
+        # Search by name
+        if ('name' %in% names(fields))
+            ids <- .self$wsGetLiteEntity(search=fields$name,
+                                         search.category="ALL NAMES",
+                                         max.results=0, retfmt='ids')
+        
+        # Search by mass
+        for (mass.field in c('monoisotopic.mass', 'molecular.mass'))
+            if (mass.field %in% names(fields)) {
+                rng <- do.call(Range$new, fields[[mass.field]])
+                if (is.null(ids))
+                    ids <- .self$.searchByMass(mass.field,
+                                               mass.min=rng$getMin(),
+                                               mass.max=rng$getMax(),
+                                               max.results=max.results)
+                else
+                    ids <-  .self$.filterIdsOnMassRange(ids, mass.min=rng$getMin(),
+                        mass.max=rng$getMax(), mass.field=mass.field,
+                        limit=max.results)
             }
-
-            # Filtering on mass range after name search
-            if ( ! is.null(ids))
-                ids <- .self$.filterIdsOnMassRange(ids, mass.min, mass.max,
-                                                   mass.field, max.results)
-            
-            # Pure mass search
-            else {
-
-                # Set search category
-                search.category <- if (mass.field == 'monoisotopic.mass')
-                    'MONOISOTOPIC MASS' else 'MASS'
-
-                # Search for all masses in the range
-                n <- floor(log10(mass.max - mass.min))
-                if (n >= 0)
-                    n <- -1
-                firstMass <- floor(mass.min * 10^-n) * 10^n
-                lastMass <- ceiling(mass.max * 10^-n) * 10^n
-                ids <- character()
-                for (m in seq(firstMass, lastMass, 10^n)) {
-
-                    # Get entries matching integer mass
-                    x <- .self$wsGetLiteEntity(search=paste0(m, '*'),
-                                               search.category=search.category,
-                                               max.results=0, retfmt='ids')
-                    
-                    # Remove IDs that we already have
-                    x <- x[ ! x %in% ids]
-                    
-                    # Filter on mass range
-                    x <- .self$.filterIdsOnMassRange(x, mass.min, mass.max,
-                                                     mass.field,
-                                                     max.results - length(ids))
-                    
-                    # Add IDs
-                    ids <- c(ids, x)
-                    
-                    if ( ! is.na(max.results) && max.results > 0 && length(ids)
-                        >= max.results)
-                        break
-                }
-
-                # Remove duplicates
-                ids <- ids[ ! duplicated(ids)]
-            }
-
-        }
     }
 
+    # Empty list if no search has been run
     if (is.null(ids))
         ids <- character()
 
     # Cut
-    if ( ! is.na(max.results) && max.results > 0 && max.results < length(ids))
+    if (max.results > 0 && max.results < length(ids))
         ids <- ids[seq_len(max.results)]
 
     return(ids)
@@ -386,7 +382,7 @@ getSearchCategories=function() {
                                  max.results=max.results, retfmt='ids'))
 },
 
-.filterIdsOnMassRange=function(ids, mass.min, mass.max, mass.field, limit) {
+.filterIdsOnMassRange=function(ids, mass.min, mass.max, mass.field, limit=0) {
 
     retids <- character()
     msg <- paste0('Filtering ChEBI entries on mass range [', mass.min, ',
@@ -410,7 +406,7 @@ getSearchCategories=function() {
                 retids <- c(retids, id)
 
                 # Stop if limit is reached
-                if ( ! is.na(limit) && limit > 0 && length(retids) >= limit)
+                if (limit > 0 && length(retids) >= limit)
                     break
             }
         }
