@@ -111,20 +111,21 @@ wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
     \nmax.results: The maximum of results to return.
     \nstars: How many starts the returned entities should have. Call
     `getStarsCategories() to get a full list of starts categories.`
-    \nretfmt: The return format to use. 'plain' will return the results as given by the server, in a string. 'parsed' will return an XML object. 'request' will return a BiodbRequest object representing the request as would have been sent. 'ids' will return a list of matched entity IDs.
+    \nretfmt: The return format to use. 'plain' will return the results as
+    given by the server, in a string. 'parsed' will return an XML object.
+    'request' will return a BiodbRequest object representing the request as
+    would have been sent. 'ids' will return a list of matched entity IDs.
     \nReturned value: Depending on `retfmt` value.
     "
 
     retfmt <- match.arg(retfmt)
 
     # Check parameters
-    .self$.assertNotNull(search)
-    .self$.assertNotNa(search)
-    .self$.assertIn(search.category, .self$getSearchCategories())
-    if (is.na(max.results))
-        max.results <- 0
-    .self$.assertPositive(max.results)
-    .self$.assertIn(stars, .self$getStarsCategories())
+    chk::chk_string(search)
+    chk::chk_in(search.category, .self$getSearchCategories())
+    chk::chk_number(max.results)
+    chk::chk_gte(max.results, 0)
+    chk::chk_in(stars, .self$getStarsCategories())
 
     # Build request
     params <- c(search=search,
