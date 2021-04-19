@@ -61,14 +61,14 @@ test_chebi_convInchiToChebi <- function(conn) {
 ################################################################
 
 # Instantiate Biodb
-biodb <- biodb::createBiodbTestInstance(log='chebi_test.log')
+biodb <- biodb::createBiodbTestInstance()
 
 # Load package definitions
 file <- system.file("definitions.yml", package='biodbChebi')
 biodb$loadDefinitions(file)
 
 # Set context
-biodb::setTestContext(biodb, "Test ChEBI connector.")
+biodb::testContext("Test ChEBI connector.")
 
 # Create connector
 conn <- biodb$getFactory()$createConn('chebi')
@@ -76,13 +76,13 @@ conn <- biodb$getFactory()$createConn('chebi')
 # Run tests
 biodb::runGenericTests(conn)
 biodb::testThat('Web service getLiteEntity works fine.',
-          test.chebi.wsGetLiteEntity, conn = conn)
+          test.chebi.wsGetLiteEntity, conn=conn)
 biodb::testThat('ChEBI encoding issue in XML is handled.',
-          test.chebi.encoding.issue.in.xml, conn = conn)
+          test.chebi.encoding.issue.in.xml, conn=conn)
 biodb::testThat('convCasToChebi() works.',
-          test_chebi_convCasToChebi, conn = conn)
+          test_chebi_convCasToChebi, conn=conn)
 biodb::testThat('convInchiToChebi() works.',
-          test_chebi_convInchiToChebi, conn = conn)
+          test_chebi_convInchiToChebi, conn=conn)
 
 # Terminate Biodb
 biodb$terminate()
