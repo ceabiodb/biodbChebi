@@ -153,7 +153,7 @@ wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
                                         XML::xmlValue, namespaces=ns)
             results <- sub('CHEBI:', '', results)
             if (length(grep("^[0-9]+$", results)) != length(results))
-                .self$error("Impossible to parse XML to get entry IDs.")
+                biodb::error("Impossible to parse XML to get entry IDs.")
         }
     }
 
@@ -175,7 +175,8 @@ convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
     msg <- paste('Converting', search.category, 'IDs to ChEBI IDs.')
 
     # Loop on all cas IDs
-    i <- 0
+    prg <- biodb::Progress$new(biodb=.self$getBiodb(), msg=msg,
+                               total=length(ids))
     for (id in ids) {
 
         # Get ChEBI IDs for this ID
@@ -188,8 +189,7 @@ convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
         chebi <- c(chebi, list(x))
 
         # Send progress message
-        i <- i + 1
-        .self$progressMsg(msg=msg, index=i, total=length(ids), first=(i == 1))
+        prg$increment()
     }
 
     # Simplify
@@ -238,7 +238,7 @@ convCasToChebi=function(cas, simplify=TRUE) {
     else if (mass.field == 'molecular.mass')
         search.category <- 'MASS'
     else
-        .self$error('Unknown mass field "', mass.field, '".')
+        biodb::error('Unknown mass field "%s".', mass.field)
                            
     # Search for all masses in the range
     n <- floor(log10(mass.max - mass.min))
@@ -389,12 +389,12 @@ getSearchCategories=function() {
                   ', mass.max, '] and field "', mass.field, '".')
 
     # Loop on all IDs
-    i <- 0
+    prg <- biodb::Progress$new(biodb=.self$getBiodb(), msg=msg,
+        total=length(ids))
     for (id in ids) {
 
         # Print progress
-        i <- i + 1
-        .self$progressMsg(msg=msg, index=i, total=length(ids), first=(i == 1))
+        prg$increment()
 
         # Get entry
         e <- .self$getEntry(id, drop=TRUE)
