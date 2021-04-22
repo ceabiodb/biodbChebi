@@ -43,7 +43,7 @@ getEntryPageUrl=function(id) {
     
     url <- c(.self$getPropValSlot('urls', 'base.url'), 'searchId.do')
     
-    urls <- vapply(id, function(x) BiodbUrl(url=url,
+    urls <- vapply(id, function(x) BiodbUrl$new(url=url,
                                             params=list(chebiId=x))$toString(),
                    FUN.VALUE='')
     
@@ -56,7 +56,7 @@ getEntryImageUrl=function(id) {
     url <- c(.self$getPropValSlot('urls', 'base.url'), 'displayImage.do')
     
     urls <- vapply(id,
-                   function(x) BiodbUrl(url=url,
+                   function(x) BiodbUrl$new(url=url,
                                         params=list(defaultImage='true',
                                           imageIndex=0, chebiId=x,
                                           dimensions=400))$toString(),
@@ -79,7 +79,7 @@ wsWsdl=function(retfmt=c('plain', 'parsed', 'request')) {
 
     # Build request
     url <- c(.self$getPropValSlot('urls', 'ws.url'), 'webservice')
-    request <- .self$makeRequest(method='get', url=BiodbUrl(url=url,
+    request <- .self$makeRequest(method='get', url=BiodbUrl$new(url=url,
                                                             params='wsdl'))
     if (retfmt == 'request')
         return(request)
@@ -133,7 +133,8 @@ wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
                 maximumResults=max.results,
                 starsCategory=stars)
     url <- c(.self$getPropValSlot('urls', 'ws.url'), 'test/getLiteEntity')
-    request <- .self$makeRequest(method='get', url=BiodbUrl(url=url, params=params),
+    request <- .self$makeRequest(method='get',
+                                 url=BiodbUrl$new(url=url, params=params),
                             encoding='UTF-8')
     if (retfmt == 'request')
         return(request)
@@ -370,7 +371,7 @@ getSearchCategories=function() {
     url <- c(.self$getPropValSlot('urls', 'ws.url'), 'test',
              'getCompleteEntity')
 
-    urls <- vapply(id, function(x) BiodbUrl(url=url,
+    urls <- vapply(id, function(x) BiodbUrl$new(url=url,
                                             params=list(chebiId=x))$toString(),
                    FUN.VALUE='')
 
