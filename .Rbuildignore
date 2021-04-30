@@ -1,4 +1,5 @@
 ^.*\.dockerfile$
+^.*\.log$
 ^\.travis\.yml$
 ^biodb_ext\.yml$
 ^biodb.*_.*\.tar\.gz$
@@ -6,7 +7,9 @@
 ^biodb.*\.Rcheck$
 ^biodbChebi_.*\.tar\.gz$
 ^biodbChebi\.Rcheck$
+^cache.*$
 ^cache$
+^check.Renviron$
 ^codecov\.yml$
 ^doc$
 ^dockers$
