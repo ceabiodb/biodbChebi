@@ -9,9 +9,9 @@ biodbChebi_*.tar.gz
 biodbChebi_*.tgz
 biodbChebi.Rcheck
 cache
+cache*
 check.Renviron
 doc
-man
 Meta
 src-i386
 src-x64

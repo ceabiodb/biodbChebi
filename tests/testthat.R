@@ -3,5 +3,5 @@
 # testthat::test_dir documentation.
 library(testthat)
 library(biodbChebi)
-Sys.setenv(TESTTHAT_REPORTER = "summary")
+Sys.setenv(TESTTHAT_REPORTER="summary")
 test_check("biodbChebi")

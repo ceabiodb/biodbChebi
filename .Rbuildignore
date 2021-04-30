@@ -7,6 +7,7 @@
 ^biodb.*\.Rcheck$
 ^biodbChebi_.*\.tar\.gz$
 ^biodbChebi\.Rcheck$
+^cache.*$
 ^cache$
 ^check.Renviron$
 ^codecov\.yml$
