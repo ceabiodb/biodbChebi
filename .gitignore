@@ -12,10 +12,12 @@ cache
 cache*
 check.Renviron
 doc
+longtests/*/output
 Meta
 src-i386
 src-x64
 src/*.rds
+tests/*/output
 tests/testthat/output
 vignettes/*.html
 vignettes/*.md

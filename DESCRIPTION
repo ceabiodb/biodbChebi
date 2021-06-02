@@ -5,7 +5,7 @@ Authors@R: c(person("Pierrick", "Roger", email = "pierrick.roger@cea.fr", role =
 Description: The biodbChebi library provides access to the ChEBI Database, using biodb package framework. It allows to retrieve entries by their accession number, and run web services for searching the database by name, mass or other fields.
 biocViews: Software, Infrastructure, DataImport
 Depends:
-    R (>= 4.0)
+    R (>= 4.1)
 License: AGPL-3
 Encoding: UTF-8
 LazyData: true
