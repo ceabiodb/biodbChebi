@@ -19,33 +19,28 @@
 #' # Terminate instance.
 #' mybiodb$terminate()
 #'
-#' @import methods
-#' @export ChebiConn
-#' @exportClass ChebiConn
-ChebiConn <- methods::setRefClass("ChebiConn",
-    contains=c("BiodbRemotedbConn", "BiodbCompounddbConn"),
-    fields=list(
-        wsdl='ANY',
-        ws.values='list' # Stores WSDL values
-    ),
+#' @import R6
+#' @export
+ChebiConn <- R6::R6Class("ChebiConn",
+inherit=biodb::BiodbConn,
 
-methods=list(
+public=list(
 
 initialize=function(...) {
 
-    callSuper(...)
+    super$initialize(...)
 
-    .self$initFields(wsdl=NULL, ws.values=list())
+    private$wsdl <- NULL
+    private$wsValues <- list()
 },
 
 getEntryPageUrl=function(id) {
     # Overrides super class' method
     
-    url <- c(.self$getPropValSlot('urls', 'base.url'), 'searchId.do')
+    url <- c(self$getPropValSlot('urls', 'base.url'), 'searchId.do')
     
     urls <- vapply(id, function(x) BiodbUrl$new(url=url,
-                                            params=list(chebiId=x))$toString(),
-                   FUN.VALUE='')
+        params=list(chebiId=x))$toString(), FUN.VALUE='')
     
     return(urls)
 },
@@ -53,39 +48,35 @@ getEntryPageUrl=function(id) {
 getEntryImageUrl=function(id) {
     # Overrides super class' method
 
-    url <- c(.self$getPropValSlot('urls', 'base.url'), 'displayImage.do')
+    url <- c(self$getPropValSlot('urls', 'base.url'), 'displayImage.do')
     
-    urls <- vapply(id,
-                   function(x) BiodbUrl$new(url=url,
-                                        params=list(defaultImage='true',
-                                          imageIndex=0, chebiId=x,
-                                          dimensions=400))$toString(),
-                  FUN.VALUE='')
+    urls <- vapply(id, function(x) BiodbUrl$new(url=url,
+        params=list(defaultImage='true', imageIndex=0, chebiId=x,
+        dimensions=400))$toString(), FUN.VALUE='')
     
     return(urls)
 },
 
-
+#' @description
+#' Retrieves the complete WSDL from the web server.
+#' @param retfmt The return format to use. 'plain' will return the value as it
+#' is returned by the server. 'parsed' will return an XML object. 'request'
+#' will return a BiodbRequest object representing the request that would have
+#' been sent. 
+#' @return Depending on `retfmt` value.
 wsWsdl=function(retfmt=c('plain', 'parsed', 'request')) {
-    ":\n\nRetrieves the complete WSDL from the web server.
-    \nretfmt: The return format to use. 'plain' will return the value as it is
-    returned by the server. 'parsed' will return an XML object. 'request' will
-    return a BiodbRequest object representing the request that would have been
-    sent. 
-    \nReturned value: Depending on `retfmt` value.
-    "
 
     retfmt <- match.arg(retfmt)
 
     # Build request
-    url <- c(.self$getPropValSlot('urls', 'ws.url'), 'webservice')
-    request <- .self$makeRequest(method='get', url=BiodbUrl$new(url=url,
+    url <- c(self$getPropValSlot('urls', 'ws.url'), 'webservice')
+    request <- self$makeRequest(method='get', url=BiodbUrl$new(url=url,
                                                             params='wsdl'))
     if (retfmt == 'request')
         return(request)
 
     # Send request
-    results <- .self$getBiodb()$getRequestScheduler()$sendRequest(request)
+    results <- self$getBiodb()$getRequestScheduler()$sendRequest(request)
 
     # Parse
     if (retfmt == 'parsed')
@@ -94,53 +85,51 @@ wsWsdl=function(retfmt=c('plain', 'parsed', 'request')) {
     return(results)
 },
 
+#' @description
+#' Calls getLiteEntity web service and returns the XML result.  Be careful when
+#' searching by mass (search.category='MASS' or 'MONOISOTOPIC MASS'), since the
+#' search is made in text mode, thus the number must be exactly written as it
+#' is stored in database, eventually padded with 0 in order to have exactly 5
+#' digits after the decimal. An easy solution is to use wildcards to search a
+#' mass '410;.718*'.
+#' See http //www.ebi.ac.uk/chebi/webServices.do for more details.
+#' @param search The text or pattern to search.
+#' @param search.category The search category. Call `getSearchCategories()` to
+#' get a full list of search categories.
+#' @param max.results The maximum of results to return.
+#' @param stars How many starts the returned entities should have. Call
+#' `getStarsCategories() to get a full list of starts categories.`
+#' @param retfmt The return format to use. 'plain' will return the results as
+#' given by the server, in a string. 'parsed' will return an XML object.
+#' 'request' will return a BiodbRequest object representing the request as
+#' would have been sent. 'ids' will return a list of matched entity IDs.
+#' @return Depending on `retfmt` value.
 wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
-                         max.results=10,
-                         retfmt=c('plain', 'parsed', 'request', 'ids')) {
-    ":\n\nCalls getLiteEntity web service and returns the XML result.
-    Be careful when searching by mass
-    (search.category='MASS' or 'MONOISOTOPIC MASS'), since the search is made
-     in text mode, thus the number must be exactly written as it is stored in
-     database, eventually padded with 0 in order to have exactly 5 digits after
-     the decimal. An easy solution is to use wildcards to search a mass:
-     '410;.718*'.
-    See http://www.ebi.ac.uk/chebi/webServices.do for more details.
-    \nsearch: The text or pattern to search.
-    \nsearch.category: The search category. Call `getSearchCategories()`
-    to get a full list of search categories.
-    \nmax.results: The maximum of results to return.
-    \nstars: How many starts the returned entities should have. Call
-    `getStarsCategories() to get a full list of starts categories.`
-    \nretfmt: The return format to use. 'plain' will return the results as
-    given by the server, in a string. 'parsed' will return an XML object.
-    'request' will return a BiodbRequest object representing the request as
-    would have been sent. 'ids' will return a list of matched entity IDs.
-    \nReturned value: Depending on `retfmt` value.
-    "
+    max.results=10, retfmt=c('plain', 'parsed', 'request', 'ids')) {
 
     retfmt <- match.arg(retfmt)
 
     # Check parameters
     chk::chk_string(search)
-    chk::chk_in(search.category, .self$getSearchCategories())
+    chk::chk_in(search.category, self$getSearchCategories())
     chk::chk_number(max.results)
     chk::chk_gte(max.results, 0)
-    chk::chk_in(stars, .self$getStarsCategories())
+    chk::chk_in(stars, self$getStarsCategories())
 
     # Build request
     params <- c(search=search,
                 searchCategory=search.category,
                 maximumResults=max.results,
                 starsCategory=stars)
-    url <- c(.self$getPropValSlot('urls', 'ws.url'), 'test/getLiteEntity')
-    request <- .self$makeRequest(method='get',
+    url <- c(self$getPropValSlot('urls', 'ws.url'), 'test/getLiteEntity')
+    request <- self$makeRequest(method='get',
                                  url=BiodbUrl$new(url=url, params=params),
                             encoding='UTF-8')
     if (retfmt == 'request')
         return(request)
 
     # Send request
-    results <- .self$getBiodb()$getRequestScheduler()$sendRequest(request)
+    results <- self$getBiodb()$getRequestScheduler()$sendRequest(request)
 
     # Parse
     if (retfmt != 'plain') {
@@ -149,7 +138,7 @@ wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
         results <-  XML::xmlInternalTreeParse(results, asText=TRUE)
 
         if (retfmt == 'ids') {
-            ns <- .self$getPropertyValue('xml.ns')
+            ns <- self$getPropertyValue('xml.ns')
             results <- XML::xpathSApply(results, "//chebi:chebiId",
                                         XML::xmlValue, namespaces=ns)
             results <- sub('CHEBI:', '', results)
@@ -161,22 +150,23 @@ wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
     return(results)
 },
 
+#' @description
+#' Converts a list of IDs (InChI, InChI Keys, CAS, ...) into a list of ChEBI
+#' IDs. Several ChEBI IDs may be returned for a single ID.
+#' @param ids The identifiers to convert.
+#' @param simplify If set to TRUE and only one ChEBI ID has been found for each
+#' ID, then a character vector is returned. Otherwise a list of character
+#' vectors is returned.
+#' @param search.category The search category. Call `getSearchCategories()` to
+#' get a full list of search categories.
+#' @return Depending on the value of simplify.
 convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
-    ":\n\nConverts a list of IDs (InChI, InChI Keys, CAS, ...) into a list of
-    ChEBI IDs. Several ChEBI IDs may be returned for a single ID.
-    \nsimplify: If set to TRUE and only one ChEBI ID has been found for each ID,
-    then a character vector is returned. Otherwise a list of character vectors
-    is returned.
-    \nsearch.category: The search category. Call `getSearchCategories()`
-    to get a full list of search categories.
-    \nReturned value: Depending on the value of simplify.
-    "
 
     chebi <- list()
     msg <- paste('Converting', search.category, 'IDs to ChEBI IDs.')
 
     # Loop on all cas IDs
-    prg <- biodb::Progress$new(biodb=.self$getBiodb(), msg=msg,
+    prg <- biodb::Progress$new(biodb=self$getBiodb(), msg=msg,
                                total=length(ids))
     for (id in ids) {
 
@@ -184,7 +174,7 @@ convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
         if (is.na(id))
             x <- character()
         else
-            x <- .self$wsGetLiteEntity(id, search.category=search.category,
+            x <- self$wsGetLiteEntity(id, search.category=search.category,
                                        retfmt='ids')
 
         chebi <- c(chebi, list(x))
@@ -203,33 +193,88 @@ convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
     return(chebi)
 },
 
+#' @description
+#' Converts a list of InChI or InChI KEYs into a list of ChEBI IDs.  Several
+#' ChEBI IDs may be returned for a single InChI or InChI KEY.
+#' @param inchi The InChI values to convert.
+#' @param simplify If set to TRUE and only one ChEBI ID has been found for each
+#' ID, then a character vector is returned. Otherwise a list of character
+#' vectors is returned.
+#' @return Depending on the value of simplify.
 convInchiToChebi=function(inchi, simplify=TRUE) {
-    ":\n\nConverts a list of InChI or InChI KEYs into a list of ChEBI IDs.
-    Several ChEBI IDs may be returned for a single InChI or InChI KEY.
-    \nsimplify: If set to TRUE and only one ChEBI ID has been found for each ID,
-    then a character vector is returned. Otherwise a list of character vectors
-    is returned.
-    \nReturned value: Depending on the value of simplify.
-    "
 
-    return(.self$convIdsToChebiIds(inchi, search.category='INCHI/INCHI KEY',
+    return(self$convIdsToChebiIds(inchi, search.category='INCHI/INCHI KEY',
                                    simplify=simplify))
 },
 
+#' @description
+#' Converts a list of CAS IDs into a list of ChEBI IDs.  Several ChEBI IDs may
+#' be returned for a single InChI or InChI KEY.
+#' @param cas The CAS IDs to convert.
+#' @param simplify If set to TRUE and only one ChEBI ID has been found for each
+#' ID, then a character vector is returned. Otherwise a list of character
+#' vectors is returned.
+#' @return Depending on the value of simplify.
 convCasToChebi=function(cas, simplify=TRUE) {
-    ":\n\nConverts a list of CAS IDs into a list of ChEBI IDs.
-    Several ChEBI IDs may be returned for a single InChI or InChI KEY.
-    \nsimplify: If set to TRUE and only one ChEBI ID has been found for each ID,
-    then a character vector is returned. Otherwise a list of character vectors
-    is returned.
-    \nReturned value: Depending on the value of simplify.
-    "
 
-    return(.self$convIdsToChebiIds(cas, search.category='REGISTRY NUMBERS',
+    return(self$convIdsToChebiIds(cas, search.category='REGISTRY NUMBERS',
                                    simplify=simplify))
 },
 
-.searchByMass=function(mass.field, mass.min, mass.max, max.results=0) {
+#' @description
+#' Gets the WSDL as an XML object.
+#' @return The ChEBI WSDL as an XML object.
+getWsdl=function() {
+    
+    if (is.null(private$wsdl))
+        private$wsdl <- self$wsWsdl(retfmt='parsed')
+    
+    return(private$wsdl)
+},
+
+#' @description
+#' Extracts a list of values from an enumeration in the WSDL.
+#' @param name The name of the enumeration for which to retrieve the values.
+#' @return A character vector listing the enumerated values.
+getWsdlEnumeration=function(name) {
+    
+    if ( ! name %in% names(private$wsValues)) {
+
+        ns <- self$getPropertyValue('xml.ns')
+
+        # Get search categories
+        expr <- paste0("//xsd:simpleType[@name='", name, "']//xsd:enumeration")
+        res <- XML::xpathSApply(self$getWsdl(), expr, XML::xmlGetAttr, 'value',
+                                namespaces=ns)
+        private$wsValues[[name]] <- res
+    }
+    
+    return(private$wsValues[[name]])
+},
+
+#' @description
+#' Gets the list of allowed stars categories for the getLiteEntity web service.
+#' @return Returns all the possible stars categories as a character vector.
+getStarsCategories=function() {
+    
+    return(self$getWsdlEnumeration('StarsCategory'))
+},
+
+#' @description
+#' Gets the list of allowed search categories for the getLiteEntity web
+#' service.
+#' @return Returns all the possible search categories as a character vector.
+getSearchCategories=function() {
+
+    return(self$getWsdlEnumeration('SearchCategory'))
+}
+),
+
+private=list(
+    wsdl=NULL,
+    wsValues=NULL,
+
+searchByMass=function(mass.field, mass.min, mass.max, max.results=0) {
 
     ids <- character()
 
@@ -250,7 +295,7 @@ convCasToChebi=function(cas, simplify=TRUE) {
     for (m in seq(firstMass, lastMass, 10^n)) {
 
         # Get entries matching integer mass
-        x <- .self$wsGetLiteEntity(search=paste0(m, '*'),
+        x <- self$wsGetLiteEntity(search=paste0(m, '*'),
                                    search.category=search.category,
                                    max.results=0, retfmt='ids')
         
@@ -258,7 +303,7 @@ convCasToChebi=function(cas, simplify=TRUE) {
         x <- x[ ! x %in% ids]
         
         # Filter on mass range
-        x <- .self$.filterIdsOnMassRange(x, mass.min, mass.max,
+        x <- private$filterIdsOnMassRange(x, mass.min, mass.max,
                                          mass.field,
                                          max.results - length(ids))
         
@@ -276,7 +321,7 @@ convCasToChebi=function(cas, simplify=TRUE) {
     return(ids)
 },
 
-.doSearchForEntries=function(fields=NULL, max.results=0) {
+doSearchForEntries=function(fields=NULL, max.results=0) {
 
     ids <- NULL
 
@@ -284,7 +329,7 @@ convCasToChebi=function(cas, simplify=TRUE) {
 
         # Search by name
         if ('name' %in% names(fields))
-            ids <- .self$wsGetLiteEntity(search=fields$name,
+            ids <- self$wsGetLiteEntity(search=fields$name,
                                          search.category="ALL NAMES",
                                          max.results=0, retfmt='ids')
         
@@ -293,12 +338,12 @@ convCasToChebi=function(cas, simplify=TRUE) {
             if (mass.field %in% names(fields)) {
                 rng <- do.call(Range$new, fields[[mass.field]])
                 if (is.null(ids))
-                    ids <- .self$.searchByMass(mass.field,
+                    ids <- private$searchByMass(mass.field,
                                                mass.min=rng$getMin(),
                                                mass.max=rng$getMax(),
                                                max.results=max.results)
                 else
-                    ids <-  .self$.filterIdsOnMassRange(ids, mass.min=rng$getMin(),
+                    ids <-  private$filterIdsOnMassRange(ids, mass.min=rng$getMin(),
                         mass.max=rng$getMax(), mass.field=mass.field,
                         limit=max.results)
             }
@@ -315,60 +360,9 @@ convCasToChebi=function(cas, simplify=TRUE) {
     return(ids)
 },
 
-getWsdl=function() {
-    ":\n\nGets the WSDL as an XML object.
-    \nReturned value: The ChEBI WSDL as an XML object.
-    "
-    
-    if (is.null(.self$wsdl))
-        .self$wsdl <- .self$wsWsdl(retfmt='parsed')
-    
-    return(.self$wsdl)
-},
+doGetEntryContentRequest=function(id, concatenate=TRUE) {
 
-getWsdlEnumeration=function(name) {
-    ":\n\nExtracts a list of values from an enumeration in the WSDL.
-    \nname: The name of the enumeration for which to retrieve the values.
-    \nReturned value: A character vector listing the enumerated values.
-    "
-    
-    if ( ! name %in% names(.self$ws.values)) {
-
-        ns <- .self$getPropertyValue('xml.ns')
-
-        # Get search categories
-        expr <- paste0("//xsd:simpleType[@name='", name, "']//xsd:enumeration")
-        res <- XML::xpathSApply(.self$getWsdl(), expr, XML::xmlGetAttr, 'value',
-                                namespaces=ns)
-        .self$ws.values[[name]] <- res
-    }
-    
-    return(.self$ws.values[[name]])
-},
-
-getStarsCategories=function() {
-    ":\n\nGets the list of allowed stars categories for the getLiteEntity web
-    service.
-    \nReturned value: Returns all the possible stars categories as a character
-    vector.
-    "
-    
-    return(.self$getWsdlEnumeration('StarsCategory'))
-},
-
-getSearchCategories=function() {
-    ":\n\nGets the list of allowed search categories for the getLiteEntity web
-    service.
-    \nReturned value: Returns all the possible search categories as a character
-    vector.
-    "
-
-    return(.self$getWsdlEnumeration('SearchCategory'))
-},
-
-.doGetEntryContentRequest=function(id, concatenate=TRUE) {
-
-    url <- c(.self$getPropValSlot('urls', 'ws.url'), 'test',
+    url <- c(self$getPropValSlot('urls', 'ws.url'), 'test',
              'getCompleteEntity')
 
     urls <- vapply(id, function(x) BiodbUrl$new(url=url,
@@ -378,19 +372,19 @@ getSearchCategories=function() {
     return(urls)
 },
 
-.doGetEntryIds=function(max.results=NA_integer_) {
-    return(.self$wsGetLiteEntity(search='1*', search.category='CHEBI ID',
+doGetEntryIds=function(max.results=NA_integer_) {
+    return(self$wsGetLiteEntity(search='1*', search.category='CHEBI ID',
                                  max.results=max.results, retfmt='ids'))
 },
 
-.filterIdsOnMassRange=function(ids, mass.min, mass.max, mass.field, limit=0) {
+filterIdsOnMassRange=function(ids, mass.min, mass.max, mass.field, limit=0) {
 
     retids <- character()
     msg <- paste0('Filtering ChEBI entries on mass range [', mass.min, ',
                   ', mass.max, '] and field "', mass.field, '".')
 
     # Loop on all IDs
-    prg <- biodb::Progress$new(biodb=.self$getBiodb(), msg=msg,
+    prg <- biodb::Progress$new(biodb=self$getBiodb(), msg=msg,
         total=length(ids))
     for (id in ids) {
 
@@ -398,7 +392,7 @@ getSearchCategories=function() {
         prg$increment()
 
         # Get entry
-        e <- .self$getEntry(id, drop=TRUE)
+        e <- self$getEntry(id, drop=TRUE)
 
         # Test mass
         if ( ! is.null(e)) {
@@ -415,5 +409,4 @@ getSearchCategories=function() {
 
     return(retids)
 }
-
 ))

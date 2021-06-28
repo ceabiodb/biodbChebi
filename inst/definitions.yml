@@ -1,6 +1,8 @@
 databases:
 
   chebi:
+    remote: true
+    compound.db: true
     entry.content.encoding: UTF-8
     entry.content.type: xml
     name: ChEBI
