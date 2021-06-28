@@ -19,7 +19,7 @@ Suggests:
 	rmarkdown,
 	lgr
 Imports:
-	methods,
+	R6,
 	biodb (>= 0.99.0)
 RoxygenNote: 7.1.1
 Collate:
