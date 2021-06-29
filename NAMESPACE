@@ -2,7 +2,5 @@
 
 export(ChebiConn)
 export(ChebiEntry)
-exportClasses(ChebiConn)
-exportClasses(ChebiEntry)
+import(R6)
 import(biodb)
-import(methods)

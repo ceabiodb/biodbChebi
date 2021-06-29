@@ -15,8 +15,8 @@
 #' # Terminate instance.
 #' mybiodb$terminate()
 #'
-#' @export ChebiEntry
-#' @exportClass ChebiEntry
-ChebiEntry <- methods::setRefClass("ChebiEntry",
-    contains="BiodbXmlEntry"
+#' @import R6
+#' @export
+ChebiEntry <- R6::R6Class("ChebiEntry",
+    inherit=biodb::BiodbXmlEntry
 )
