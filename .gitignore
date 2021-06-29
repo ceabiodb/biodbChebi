@@ -14,6 +14,7 @@ check.Renviron
 doc
 longtests/*/output
 Meta
+Renviron.bioc
 src-i386
 src-x64
 src/*.rds
