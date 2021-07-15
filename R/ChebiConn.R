@@ -26,35 +26,17 @@ inherit=biodb::BiodbConn,
 
 public=list(
 
+#' @description
+#' New instance initializer. Connector classes must not be instantiated
+#' directly. Instead, you must use the createConn() method of the factory class.
+#' @param ... All parameters are passed to the super class initializer.
+#' @return Nothing.
 initialize=function(...) {
 
     super$initialize(...)
 
     private$wsdl <- NULL
     private$wsValues <- list()
-},
-
-getEntryPageUrl=function(id) {
-    # Overrides super class' method
-    
-    url <- c(self$getPropValSlot('urls', 'base.url'), 'searchId.do')
-    
-    urls <- vapply(id, function(x) BiodbUrl$new(url=url,
-        params=list(chebiId=x))$toString(), FUN.VALUE='')
-    
-    return(urls)
-},
-
-getEntryImageUrl=function(id) {
-    # Overrides super class' method
-
-    url <- c(self$getPropValSlot('urls', 'base.url'), 'displayImage.do')
-    
-    urls <- vapply(id, function(x) BiodbUrl$new(url=url,
-        params=list(defaultImage='true', imageIndex=0, chebiId=x,
-        dimensions=400))$toString(), FUN.VALUE='')
-    
-    return(urls)
 },
 
 #' @description
@@ -123,8 +105,7 @@ wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
                 starsCategory=stars)
     url <- c(self$getPropValSlot('urls', 'ws.url'), 'test/getLiteEntity')
     request <- self$makeRequest(method='get',
-                                 url=BiodbUrl$new(url=url, params=params),
-                            encoding='UTF-8')
+        url=BiodbUrl$new(url=url, params=params), encoding='UTF-8')
     if (retfmt == 'request')
         return(request)
 
@@ -167,7 +148,7 @@ convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
 
     # Loop on all cas IDs
     prg <- biodb::Progress$new(biodb=self$getBiodb(), msg=msg,
-                               total=length(ids))
+        total=length(ids))
     for (id in ids) {
 
         # Get ChEBI IDs for this ID
@@ -175,7 +156,7 @@ convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
             x <- character()
         else
             x <- self$wsGetLiteEntity(id, search.category=search.category,
-                                       retfmt='ids')
+                retfmt='ids')
 
         chebi <- c(chebi, list(x))
 
@@ -186,7 +167,7 @@ convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
     # Simplify
     if (simplify && all(vapply(chebi, length, FUN.VALUE=1L) < 2)) {
         chebi <- lapply(chebi, function(x) if (length(x) == 0) NA_character_
-                                           else x)
+            else x)
         chebi <- unlist(chebi)
     }
 
@@ -204,7 +185,7 @@ convIdsToChebiIds=function(ids, search.category, simplify=TRUE) {
 convInchiToChebi=function(inchi, simplify=TRUE) {
 
     return(self$convIdsToChebiIds(inchi, search.category='INCHI/INCHI KEY',
-                                   simplify=simplify))
+        simplify=simplify))
 },
 
 #' @description
@@ -218,7 +199,7 @@ convInchiToChebi=function(inchi, simplify=TRUE) {
 convCasToChebi=function(cas, simplify=TRUE) {
 
     return(self$convIdsToChebiIds(cas, search.category='REGISTRY NUMBERS',
-                                   simplify=simplify))
+        simplify=simplify))
 },
 
 #' @description
@@ -285,7 +266,7 @@ searchByMass=function(mass.field, mass.min, mass.max, max.results=0) {
         search.category <- 'MASS'
     else
         biodb::error('Unknown mass field "%s".', mass.field)
-                           
+
     # Search for all masses in the range
     n <- floor(log10(mass.max - mass.min))
     if (n >= 0)
@@ -296,16 +277,14 @@ searchByMass=function(mass.field, mass.min, mass.max, max.results=0) {
 
         # Get entries matching integer mass
         x <- self$wsGetLiteEntity(search=paste0(m, '*'),
-                                   search.category=search.category,
-                                   max.results=0, retfmt='ids')
+            search.category=search.category, max.results=0, retfmt='ids')
         
         # Remove IDs that we already have
         x <- x[ ! x %in% ids]
         
         # Filter on mass range
-        x <- private$filterIdsOnMassRange(x, mass.min, mass.max,
-                                         mass.field,
-                                         max.results - length(ids))
+        x <- private$filterIdsOnMassRange(x, mass.min, mass.max, mass.field,
+            max.results - length(ids))
         
         # Add IDs
         ids <- c(ids, x)
@@ -330,8 +309,7 @@ doSearchForEntries=function(fields=NULL, max.results=0) {
         # Search by name
         if ('name' %in% names(fields))
             ids <- self$wsGetLiteEntity(search=fields$name,
-                                         search.category="ALL NAMES",
-                                         max.results=0, retfmt='ids')
+                search.category="ALL NAMES", max.results=0, retfmt='ids')
         
         # Search by mass
         for (mass.field in c('monoisotopic.mass', 'molecular.mass'))
@@ -339,13 +317,12 @@ doSearchForEntries=function(fields=NULL, max.results=0) {
                 rng <- do.call(Range$new, fields[[mass.field]])
                 if (is.null(ids))
                     ids <- private$searchByMass(mass.field,
-                                               mass.min=rng$getMin(),
-                                               mass.max=rng$getMax(),
-                                               max.results=max.results)
+                        mass.min=rng$getMin(), mass.max=rng$getMax(),
+                        max.results=max.results)
                 else
-                    ids <-  private$filterIdsOnMassRange(ids, mass.min=rng$getMin(),
-                        mass.max=rng$getMax(), mass.field=mass.field,
-                        limit=max.results)
+                    ids <-  private$filterIdsOnMassRange(ids,
+                        mass.min=rng$getMin(), mass.max=rng$getMax(),
+                        mass.field=mass.field, limit=max.results)
             }
     }
 
@@ -363,25 +340,45 @@ doSearchForEntries=function(fields=NULL, max.results=0) {
 doGetEntryContentRequest=function(id, concatenate=TRUE) {
 
     url <- c(self$getPropValSlot('urls', 'ws.url'), 'test',
-             'getCompleteEntity')
+        'getCompleteEntity')
 
     urls <- vapply(id, function(x) BiodbUrl$new(url=url,
-                                            params=list(chebiId=x))$toString(),
-                   FUN.VALUE='')
+        params=list(chebiId=x))$toString(), FUN.VALUE='')
 
+    return(urls)
+},
+
+doGetEntryPageUrl=function(id) {
+    
+    url <- c(self$getPropValSlot('urls', 'base.url'), 'searchId.do')
+    
+    urls <- vapply(id, function(x) BiodbUrl$new(url=url,
+        params=list(chebiId=x))$toString(), FUN.VALUE='')
+    
+    return(urls)
+},
+
+doGetEntryImageUrl=function(id) {
+
+    url <- c(self$getPropValSlot('urls', 'base.url'), 'displayImage.do')
+    
+    urls <- vapply(id, function(x) BiodbUrl$new(url=url,
+        params=list(defaultImage='true', imageIndex=0, chebiId=x,
+        dimensions=400))$toString(), FUN.VALUE='')
+    
     return(urls)
 },
 
 doGetEntryIds=function(max.results=NA_integer_) {
     return(self$wsGetLiteEntity(search='1*', search.category='CHEBI ID',
-                                 max.results=max.results, retfmt='ids'))
+        max.results=max.results, retfmt='ids'))
 },
 
 filterIdsOnMassRange=function(ids, mass.min, mass.max, mass.field, limit=0) {
 
     retids <- character()
     msg <- paste0('Filtering ChEBI entries on mass range [', mass.min, ',
-                  ', mass.max, '] and field "', mass.field, '".')
+        ', mass.max, '] and field "', mass.field, '".')
 
     # Loop on all IDs
     prg <- biodb::Progress$new(biodb=self$getBiodb(), msg=msg,

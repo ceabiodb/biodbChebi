@@ -36,8 +36,6 @@ mybiodb$terminate()
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{ChebiConn$new()}}
-\item \href{#method-getEntryPageUrl}{\code{ChebiConn$getEntryPageUrl()}}
-\item \href{#method-getEntryImageUrl}{\code{ChebiConn$getEntryImageUrl()}}
 \item \href{#method-wsWsdl}{\code{ChebiConn$wsWsdl()}}
 \item \href{#method-wsGetLiteEntity}{\code{ChebiConn$wsGetLiteEntity()}}
 \item \href{#method-convIdsToChebiIds}{\code{ChebiConn$convIdsToChebiIds()}}
@@ -115,6 +113,8 @@ mybiodb$terminate()
 \item \out{<span class="pkg-link" data-pkg="biodb" data-topic="BiodbConn" data-id="getEntryContentFromDb">}\href{../../biodb/html/BiodbConn.html#method-getEntryContentFromDb}{\code{biodb::BiodbConn$getEntryContentFromDb()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="biodb" data-topic="BiodbConn" data-id="getEntryContentRequest">}\href{../../biodb/html/BiodbConn.html#method-getEntryContentRequest}{\code{biodb::BiodbConn$getEntryContentRequest()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="biodb" data-topic="BiodbConn" data-id="getEntryIds">}\href{../../biodb/html/BiodbConn.html#method-getEntryIds}{\code{biodb::BiodbConn$getEntryIds()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="biodb" data-topic="BiodbConn" data-id="getEntryImageUrl">}\href{../../biodb/html/BiodbConn.html#method-getEntryImageUrl}{\code{biodb::BiodbConn$getEntryImageUrl()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="biodb" data-topic="BiodbConn" data-id="getEntryPageUrl">}\href{../../biodb/html/BiodbConn.html#method-getEntryPageUrl}{\code{biodb::BiodbConn$getEntryPageUrl()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="biodb" data-topic="BiodbConn" data-id="getId">}\href{../../biodb/html/BiodbConn.html#method-getId}{\code{biodb::BiodbConn$getId()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="biodb" data-topic="BiodbConn" data-id="getMatchingMzField">}\href{../../biodb/html/BiodbConn.html#method-getMatchingMzField}{\code{biodb::BiodbConn$getMatchingMzField()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="biodb" data-topic="BiodbConn" data-id="getMzValues">}\href{../../biodb/html/BiodbConn.html#method-getMzValues}{\code{biodb::BiodbConn$getMzValues()}}\out{</span>}
@@ -156,28 +156,22 @@ mybiodb$terminate()
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
+New instance initializer. Connector classes must not be instantiated
+directly. Instead, you must use the createConn() method of the factory class.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ChebiConn$new(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{All parameters are passed to the super class initializer.}
 }
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getEntryPageUrl"></a>}}
-\if{latex}{\out{\hypertarget{method-getEntryPageUrl}{}}}
-\subsection{Method \code{getEntryPageUrl()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ChebiConn$getEntryPageUrl(id)}\if{html}{\out{</div>}}
+\if{html}{\out{</div>}}
 }
-
+\subsection{Returns}{
+Nothing.
 }
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getEntryImageUrl"></a>}}
-\if{latex}{\out{\hypertarget{method-getEntryImageUrl}{}}}
-\subsection{Method \code{getEntryImageUrl()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ChebiConn$getEntryImageUrl(id)}\if{html}{\out{</div>}}
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-wsWsdl"></a>}}
