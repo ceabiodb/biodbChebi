@@ -21,7 +21,7 @@ Suggests:
 Imports:
 	R6,
 	biodb (>= 1.1.2)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Collate:
     'ChebiConn.R'
     'ChebiEntry.R'
