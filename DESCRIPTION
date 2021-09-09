@@ -20,7 +20,7 @@ Suggests:
 	lgr
 Imports:
 	R6,
-	biodb (>= 0.99.0)
+	biodb (>= 1.1.2)
 RoxygenNote: 7.1.1
 Collate:
     'ChebiConn.R'

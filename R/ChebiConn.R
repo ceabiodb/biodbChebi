@@ -93,10 +93,10 @@ wsGetLiteEntity=function(search=NULL, search.category='ALL', stars='ALL',
 
     # Check parameters
     chk::chk_string(search)
-    chk::chk_in(search.category, self$getSearchCategories())
+    chk::chk_subset(search.category, self$getSearchCategories())
     chk::chk_number(max.results)
     chk::chk_gte(max.results, 0)
-    chk::chk_in(stars, self$getStarsCategories())
+    chk::chk_subset(stars, self$getStarsCategories())
 
     # Build request
     params <- c(search=search,
