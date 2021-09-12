@@ -13,7 +13,9 @@ biodb$loadDefinitions(defFile)
 conn <- biodb$getFactory()$createConn('chebi')
 
 # Run generic tests
-biodb::runGenericTests(conn, short=FALSE, long=TRUE, list(max.results=1))
+testRefFolder <- system.file("testref", package='biodbChebi')
+biodb::runGenericTests(conn, pkgName='biodbChebi', short=FALSE, long=TRUE,
+    testRefFolder=testRefFolder, opt=list(max.results=1))
 
 # Terminate Biodb
 biodb$terminate()
