@@ -58,7 +58,7 @@ Getting the values of entry fields are done using `getFieldValue()` method.
 Here we retrieve the SMILE field of the first entry from the ChEBI entries
 obtained previously:
 ```{r}
-entries[[0]]$getFieldValue('smiles')
+entries[[1]]$getFieldValue('smiles')
 ```
 
 # Get data frame
