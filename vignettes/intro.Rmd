@@ -19,7 +19,7 @@ output:
 # Purpose
 
 biodbChebi is a *biodb* extension package that implements a connector to
-Foo database.
+the [ChEBI](https://www.ebi.ac.uk/chebi/) database.
 
 # Initialization
 
@@ -35,7 +35,7 @@ and extension packages are loaded.
 We will see at the end of this vignette that the *biodb* instance needs to be
 terminated with a call to the `terminate()` method.
 
-# Creating a connector to Foo database
+# Creating a connector to ChEBI database
 
 In *biodb* the connection to a database is handled by a connector instance that
 you can get from the factory.
@@ -55,9 +55,10 @@ entries <- chebi$getEntry(c('2528', '17053', '15440'))
 # Get entry fields
 
 Getting the values of entry fields are done using `getFieldValue()` method.
-Here we retrieve the SMILES fields for all ChEBI entries obtained previously:
+Here we retrieve the SMILE field of the first entry from the ChEBI entries
+obtained previously:
 ```{r}
-vapply(entries, function(e) e$getFieldValue('smiles'), FUN.VALUE = '')
+entries[[0]]$getFieldValue('smiles')
 ```
 
 # Get data frame
@@ -69,7 +70,8 @@ entries[[1]]$getFieldsAsDataframe()
 
 Building a data frame for a list of entries is also possible:
 ```{r}
-mybiodb$entriesToDataframe(entries, fields = c('accession', 'formula', 'molecular.mass', 'inchikey', 'kegg.compound.id'))
+mybiodb$entriesToDataframe(entries, fields=c('accession', 'formula',
+    'molecular.mass', 'inchikey', 'kegg.compound.id'))
 ```
 
 # Search by name and mass
@@ -78,21 +80,24 @@ Searching by name and/or mass is done through the `searchCompound()`.
 
 Searching by name:
 ```{r}
-chebi$searchCompound(name = 'aspartic', max.results = 3)
+chebi$searchCompound(name='aspartic', max.results=3)
 ```
 
 Searching by mass:
 ```{r}
-chebi$searchCompound(mass = 133, mass.field = 'molecular.mass', mass.tol = 0.3, max.results = 3)
+chebi$searchCompound(mass=133, mass.field='molecular.mass', mass.tol=0.3,
+    max.results=3)
 ```
 
 Searching by name and mass:
 ```{r}
-ids <- chebi$searchCompound(name = 'aspartic', mass = 133, mass.field = 'molecular.mass', mass.tol = 0.3, max.results = 3)
+ids <- chebi$searchCompound(name='aspartic', mass=133,
+    mass.field='molecular.mass', mass.tol=0.3, max.results=3)
 ```
 Display results in data frame:
 ```{r}
-mybiodb$entriesToDataframe(chebi$getEntry(ids), fields = c('accession', 'molecular.mass', 'name'))
+mybiodb$entriesToDataframe(chebi$getEntry(ids), fields=c('accession',
+    'molecular.mass', 'name'))
 ```
 
 # Convert CAS IDs
@@ -102,11 +107,13 @@ Converting CAS IDs to ChEBI IDs:
 chebi$convCasToChebi(c('87605-72-9', '51-41-2'))
 ```
 
-If more than one ChEBI ID is found for a CAS ID, then a list of character vectors is returned:
+If more than one ChEBI ID is found for a CAS ID, then a list of character
+vectors is returned:
 ```{r}
 chebi$convCasToChebi('14215-68-0')
 ```
-This behaviour can be made the default one by setting `simplify` parameter to `FALSE`.
+This behaviour can be made the default one by setting `simplify` parameter to
+`FALSE`.
 
 # Convert InChI
 

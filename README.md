@@ -1,25 +1,53 @@
+<!-- vimvars: b:markdown_embedded_syntax={'r':''} -->
 # biodbChebi
 
-[![Build Status](https://travis-ci.org/pkrog/biodbChebi.svg?branch=master)](https://travis-ci.org/pkrog/biodbChebi)
 [![Codecov test coverage](https://codecov.io/gh/pkrog/biodbChebi/branch/master/graph/badge.svg)](https://codecov.io/gh/pkrog/biodbChebi?branch=master)
 
-An R package for accessing [Chebi](https://www.ebi.ac.uk/chebi/) online database, based on R package/framework [biodb](https://github.com/pkrog/biodb/).
+An R Bioconductor package for accessing [ChEBI](https://www.ebi.ac.uk/chebi/)
+online database, based on Bioconductor package/framework
+[biodb](https://github.com/pkrog/biodb/).
 
 ## Introduction
 
-TODO
+*biodbChebi* is an extension package of the *biodb* package.
+It allows to connect to ChEBI for retrieving entries, searching for entries by
+name or mass, and convert CAS IDs or InChI to ChEBI IDs.
 
 ## Examples
 
-TODO
+Getting a single entry:
+```r
+bdb <- biodb::Biodb()
+chebi <- bdb$getFactory()$createConn('chebi')
+entries <- chebi$getEntry(c('2528', '7799', '15440'))
+bdb$entriesToDataframe(entries)
+```
+
+Searching by name and mass:
+```r
+bdb <- biodb::Biodb()
+chebi <- bdb$getFactory()$createConn('chebi')
+ids <- chebi$searchCompound(name='aspartic', mass=133,
+    mass.field='molecular.mass', mass.tol=0.3, max.results=3)
+```
+
+See the vignette for more examples.
 
 ## Installation
 
-TODO
+Install the latest stable version using Bioconductor:
+```r
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install('biodbChebi')
+```
 
 ## Documentation
 
-TODO
+See the introduction vignette:
+```r
+vignette('intro', package='biodbChebi')
+```
 
 ## Citations
 

@@ -1,3 +1,7 @@
+Changes in version 0.99.3 (2021-09-28)
++ Complete all chapters in README.
++ Remove 'foo' names in vignette.
+
 Changes in version 0.99.2 (2021-09-23)
 + Define R_BUILD_TAR in makefile to build on UNIX.
 
