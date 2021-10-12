@@ -4,22 +4,32 @@ author: "Firstname of author Lastname of author"
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('biodbChebi')`"
 vignette: |
-  %\VignetteIndexEntry{Introduction to the biodbChebi package.}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{Introduction to the biodbChebi package.}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 output:
-  BiocStyle::html_document:
-    toc: yes
-    toc_depth: 4
-    toc_float:
-      collapsed: false
-  BiocStyle::pdf_document: default
+    BiocStyle::html_document:
+        toc: yes
+        toc_depth: 4
+        toc_float:
+            collapsed: false
+    BiocStyle::pdf_document: default
+bibliography: references.bib
 ---
 
-# Purpose
+# Introduction
 
 biodbChebi is a *biodb* extension package that implements a connector to
-the [ChEBI](https://www.ebi.ac.uk/chebi/) database.
+the [ChEBI](https://www.ebi.ac.uk/chebi/) database [@degtyarenko2007_ChEBI; @hastings2012_chebi].
+
+# Installation
+
+Install using Bioconductor:
+```{r, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install('biodbChebi')
+```
 
 # Initialization
 
@@ -135,3 +145,11 @@ Do not forget to terminate your biodb instance once you are done with it:
 ```{r}
 mybiodb$terminate()
 ```
+
+# Session information
+
+```{r}
+sessionInfo()
+```
+
+# References
