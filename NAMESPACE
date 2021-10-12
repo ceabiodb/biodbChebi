@@ -2,5 +2,5 @@
 
 export(ChebiConn)
 export(ChebiEntry)
-import(R6)
 import(biodb)
+importFrom(R6,R6Class)
