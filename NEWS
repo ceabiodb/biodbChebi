@@ -1,4 +1,7 @@
 Changes in version 0.99.6 (2021-10-12)
++ Rename vignette.
++ Add session info and install section in vignette.
++ Use importFrom.
 
 Changes in version 0.99.5 (2021-10-07)
 + Write description on multiple lines.
