@@ -19,7 +19,7 @@
 #' # Terminate instance.
 #' mybiodb$terminate()
 #'
-#' @import R6
+#' @importFrom R6 R6Class
 #' @export
 ChebiConn <- R6::R6Class("ChebiConn",
 inherit=biodb::BiodbConn,
