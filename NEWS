@@ -1,3 +1,5 @@
+Changes in version 0.99.6 (2021-10-12)
+
 Changes in version 0.99.5 (2021-10-07)
 + Write description on multiple lines.
 + Put comment banners to indicate public and private sections in R6 class.
