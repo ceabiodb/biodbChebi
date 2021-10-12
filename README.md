@@ -46,7 +46,7 @@ BiocManager::install('biodbChebi')
 
 See the introduction vignette:
 ```r
-vignette('intro', package='biodbChebi')
+vignette('biodbChebi', package='biodbChebi')
 ```
 
 ## Citations
