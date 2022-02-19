@@ -334,14 +334,6 @@ doSearchForEntries=function(fields=NULL, max.results=0) {
             }
     }
 
-    # Empty list if no search has been run
-    if (is.null(ids))
-        ids <- character()
-
-    # Cut
-    if (max.results > 0 && max.results < length(ids))
-        ids <- ids[seq_len(max.results)]
-
     return(ids)
 },
 
