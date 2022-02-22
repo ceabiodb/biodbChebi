@@ -17,7 +17,7 @@ name or mass, and convert CAS IDs or InChI to ChEBI IDs.
 
 Getting a single entry:
 ```r
-bdb <- biodb::Biodb()
+bdb <- biodb::newInst()
 chebi <- bdb$getFactory()$createConn('chebi')
 entries <- chebi$getEntry(c('2528', '7799', '15440'))
 bdb$entriesToDataframe(entries)
@@ -25,7 +25,7 @@ bdb$entriesToDataframe(entries)
 
 Searching by name and mass:
 ```r
-bdb <- biodb::Biodb()
+bdb <- biodb::newInst()
 chebi <- bdb$getFactory()$createConn('chebi')
 ids <- chebi$searchCompound(name='aspartic', mass=133,
     mass.field='molecular.mass', mass.tol=0.3, max.results=3)
