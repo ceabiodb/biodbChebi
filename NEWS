@@ -1,3 +1,8 @@
+Changes in version 1.1.1 (2022-03-15)
++ Change vignette name. Set author name.
++ Remove code already in biodb package.
++ Upgrade maintenance files.
+
 Changes in version 0.99.6 (2021-10-12)
 + Rename vignette.
 + Add session info and install section in vignette.

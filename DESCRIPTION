@@ -1,6 +1,6 @@
 Package: biodbChebi
 Title: biodbChebi, a library for connecting to the ChEBI Database
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(person("Pierrick", "Roger", email="pierrick.roger@cea.fr", role=c("aut", "cre"), comment=c(ORCID="0000-0001-8177-4873")))
 Description: The biodbChebi library provides access to the ChEBI Database,
     using biodb package framework. It allows to retrieve entries by their
