@@ -1,8 +1,10 @@
 ---
 title: "An introduction to biodbChebi"
-author: "Firstname of author Lastname of author"
+author: "Pierrick Roger"
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('biodbChebi')`"
+abstract: |
+  How to use the biodbChebi connector and its methods.
 vignette: |
     %\VignetteIndexEntry{Introduction to the biodbChebi package.}
     %\VignetteEngine{knitr::rmarkdown}
