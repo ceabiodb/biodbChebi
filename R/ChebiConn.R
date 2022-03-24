@@ -24,10 +24,6 @@
 ChebiConn <- R6::R6Class("ChebiConn",
 inherit=biodb::BiodbConn,
 
-################################################################
-# R6 PUBLIC MEMBERS AND METHODS
-################################################################
-
 public=list(
 
 #' @description
@@ -254,10 +250,6 @@ getSearchCategories=function() {
     return(self$getWsdlEnumeration('SearchCategory'))
 }
 ),
-
-################################################################
-# R6 PRIVATE MEMBERS AND METHODS
-################################################################
 
 private=list(
     wsdl=NULL,
